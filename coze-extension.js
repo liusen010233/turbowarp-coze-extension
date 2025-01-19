@@ -28,8 +28,13 @@
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer pat_gtKhkUODKyPYlOFBNzF4MWKfSSCenMIaoNkSZXiyaJJUjrRcoVFvpmR4MqwxhYX1',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Origin': 'https://turbowarp.org',
+                        'Access-Control-Allow-Origin': '*'
                     },
+                    mode: 'cors',
+                    credentials: 'omit',
                     body: JSON.stringify({
                         bot_id: "7461612810762665993",
                         user_id: "7461462845398482955",
@@ -45,6 +50,10 @@
                     })
                 });
                 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 console.log('Coze API 响应:', data);
                 
@@ -54,10 +63,13 @@
                 if (data.message) {
                     return data.message.content;
                 }
+                if (data.error) {
+                    return `API错误: ${data.error.message || JSON.stringify(data.error)}`;
+                }
                 return JSON.stringify(data);
             } catch (error) {
                 console.error('Coze API 错误:', error);
-                return '错误：' + error.message;
+                return `错误：${error.message}\n请检查控制台获取详细信息`;
             }
         }
     }
